@@ -83,7 +83,7 @@ function StoryDetail({ story, width }: { story: HnStory; width: number }) {
       </Box>
       {story.site ? (
         <Box height={1}>
-          <Text fg={colors.accent}>{story.site}</Text>
+          <Text fg={colors.textBright}>{story.site}</Text>
         </Box>
       ) : null}
       {story.text ? (
@@ -112,6 +112,8 @@ export function HackerNewsPane({ focused, width, height }: PaneProps) {
   // one layout keep independent feeds and both survive a restart.
   const [feed, setFeed] = usePluginPaneState<HnFeedId>("feed", "top");
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  // Hacker News feeds arrive already ranked, so the default is no client sort.
+  const [sortColumn, setSortColumn] = useState<"score" | "comments" | "age" | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
   const [stories, setStories] = useState<HnStory[]>([]);
@@ -150,9 +152,16 @@ export function HackerNewsPane({ focused, width, height }: PaneProps) {
     return () => clearInterval(timer);
   }, [refresh]);
 
+  const rows = useMemo(() => {
+    if (sortColumn === "score") return [...stories].sort((a, b) => b.score - a.score);
+    if (sortColumn === "comments") return [...stories].sort((a, b) => b.comments - a.comments);
+    if (sortColumn === "age") return [...stories].sort((a, b) => b.time - a.time);
+    return stories;
+  }, [sortColumn, stories]);
+
   const selected = useMemo(
-    () => stories.find((story) => story.id === selectedId) ?? stories[0] ?? null,
-    [selectedId, stories],
+    () => rows.find((story) => story.id === selectedId) ?? rows[0] ?? null,
+    [rows, selectedId],
   );
 
   const info: PaneFooterSegment[] = [];
@@ -220,16 +229,23 @@ export function HackerNewsPane({ focused, width, height }: PaneProps) {
         detailTitle={selected?.title}
         selection={{
           kind: "id",
-          selectedId: selected?.id ?? null,
-          getId: (story) => story.id,
-          onChange: (id) => setSelectedId(typeof id === "number" ? id : null),
+          selectedId: selected ? String(selected.id) : null,
+          getId: (story) => String(story.id),
+          onChange: (id) => setSelectedId(id === null ? null : Number(id)),
         }}
         onActivate={() => setDetailOpen(true)}
         rootWidth={width}
         rootHeight={Math.max(1, height - 1)}
         columns={columns}
-        items={stories}
-        getItemKey={(story) => story.id}
+        items={rows}
+        getItemKey={(story) => String(story.id)}
+        sortColumnId={sortColumn}
+        sortDirection="desc"
+        onHeaderClick={(columnId) => {
+          if (columnId === "score" || columnId === "comments" || columnId === "age") {
+            setSortColumn((current) => (current === columnId ? null : columnId));
+          }
+        }}
         renderCell={(story, column, _index, rowState) => renderCell(story, column, rowState)}
         emptyStateTitle="No stories."
       />
