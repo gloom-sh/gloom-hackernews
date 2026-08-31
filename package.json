@@ -20,8 +20,6 @@
   "devDependencies": {
     "@types/bun": "^1.3.14",
     "@types/react": "^19.2.7",
-    "gloomberb": "github:gloom-sh/gloomberb",
-    "react": "^19.2.3",
     "typescript": "^5.9.3"
   }
 }

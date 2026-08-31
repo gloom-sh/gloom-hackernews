@@ -49,7 +49,14 @@ gloomberb install your-github-user/my-plugin
 
 ## Development
 
-The `gloomberb` devDependency exists so this repo can typecheck against the real API. At runtime Gloomberb symlinks its own copy in, so plugins are installed with `--production` and never ship a second one.
+`gloomberb` and `react` are peer dependencies, never real ones. Gloomberb symlinks its own copies into every plugin directory on install and on load, so there is exactly one instance of each in the process — two copies of React would throw on the first hook. CI links the host the same way, which is why it typechecks against the same module graph that runs in production.
+
+```bash
+git clone --depth 1 https://github.com/gloom-sh/gloomberb.git /tmp/gloomberb
+bun install --cwd /tmp/gloomberb
+ln -sfn /tmp/gloomberb node_modules/gloomberb
+ln -sfn /tmp/gloomberb/node_modules/react node_modules/react
+```
 
 ## License
 
