@@ -3,7 +3,7 @@
 The Hacker News front page as a Gloomberb pane. Top, New, Best, Show, and Ask, with scores, comment counts, and one-key article opening.
 
 ```bash
-gloomberb install hackernews
+gloomberb install gloom-sh/gloomberb-hackernews
 ```
 
 Then press `HN` in the command bar.
