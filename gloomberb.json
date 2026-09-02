@@ -1,5 +1,6 @@
 {
   "id": "hackernews",
+  "name": "Hacker News",
   "tagline": "Hacker News front page, with Show, Ask, New, and Best",
   "description": "Browse Hacker News without leaving Gloomberb. Top, New, Best, Show, and Ask feeds with scores, comment counts, and one-key article opening. Also the reference plugin \u2014 about 400 lines, no dependencies beyond the host, and the shortest path to writing your own.",
   "categories": [
