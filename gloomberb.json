@@ -17,5 +17,5 @@
   "hosts": [
     "hacker-news.firebaseio.com"
   ],
-  "minGloomberb": "0.12.0"
+  "minGloomberb": "0.14.0"
 }

@@ -3,7 +3,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   DataTableStackView,
   EmptyState,
-  Spinner,
+  Notice,
+  PaneStatusBody,
+  Prose,
+  SectionHeading,
   Tabs,
   useExternalLinkFooter,
   type DataTableCell,
@@ -13,7 +16,7 @@ import {
 import { usePluginPaneState } from "gloomberb/react";
 import { colors } from "gloomberb/theme";
 import type { PaneProps } from "gloomberb/types/plugin";
-import { Box, ScrollBox, Text, TextAttributes } from "gloomberb/ui";
+import { Box, ScrollBox } from "gloomberb/ui";
 import { formatCompact, formatRelativeAge } from "gloomberb/utils";
 
 import { discussionUrl, loadFeed, storyUrl } from "./client";
@@ -74,25 +77,20 @@ function renderCell(story: HnStory, column: Column, rowState: { selected: boolea
 
 function StoryDetail({ story, width }: { story: HnStory; width: number }) {
   return (
-    <ScrollBox flexDirection="column" width={width} paddingLeft={1} paddingRight={1}>
-      <Box flexDirection="row" gap={2} height={1}>
-        <Text fg={colors.textDim}>{`${story.score} points`}</Text>
-        <Text fg={colors.textDim}>{`by ${story.by}`}</Text>
-        <Text fg={colors.textDim}>{story.time > 0 ? formatRelativeAge(story.time * 1000) : ""}</Text>
-        <Text fg={colors.textDim}>{`${story.comments} comments`}</Text>
-      </Box>
-      {story.site ? (
-        <Box height={1}>
-          <Text fg={colors.textBright}>{story.site}</Text>
-        </Box>
-      ) : null}
+    <ScrollBox scrollY focusable={false} flexGrow={1} flexShrink={1} flexDirection="column" width={width} paddingLeft={1} paddingRight={1}>
+      <Notice tone="muted">{[
+        `${story.score} points`, `by ${story.by}`,
+        story.time > 0 ? formatRelativeAge(story.time * 1000) : null,
+        `${story.comments} comments`,
+      ].filter(Boolean).join("  ·  ")}</Notice>
+      {story.site ? <SectionHeading title={story.site} /> : null}
       {story.text ? (
         <Box flexDirection="column" paddingTop={1}>
-          <Text fg={colors.text}>{stripHtml(story.text)}</Text>
+          <Prose text={stripHtml(story.text)} width={Math.max(1, width - 2)} />
         </Box>
       ) : (
         <Box paddingTop={1}>
-          <Text fg={colors.textDim}>No text body. Press o to open the article.</Text>
+          <EmptyState title="No text body." hint="Press o to open the article." />
         </Box>
       )}
     </ScrollBox>
@@ -198,29 +196,15 @@ export function HackerNewsPane({ focused, width, height }: PaneProps) {
     />
   );
 
-  if (status === "loading" && stories.length === 0) {
-    return (
-      <Box flexDirection="column" width={width} height={height}>
-        {tabs}
-        <Box flexGrow={1} alignItems="center" justifyContent="center">
-          <Spinner />
-        </Box>
-      </Box>
-    );
-  }
-
-  if (status === "error" && stories.length === 0) {
-    return (
-      <Box flexDirection="column" width={width} height={height}>
-        {tabs}
-        <EmptyState title="Hacker News is unreachable." hint="Retries automatically." />
-      </Box>
-    );
-  }
-
   return (
     <Box flexDirection="column" width={width} height={height}>
       {tabs}
+      <PaneStatusBody
+        align="center"
+        loading={status === "loading" && stories.length === 0}
+        error={status === "error" && stories.length === 0 ? "Retries automatically." : null}
+        errorTitle="Hacker News is unreachable."
+      >
       <DataTableStackView<HnStory, Column>
         focused={focused}
         detailOpen={detailOpen && !!selected}
@@ -249,6 +233,7 @@ export function HackerNewsPane({ focused, width, height }: PaneProps) {
         renderCell={(story, column, _index, rowState) => renderCell(story, column, rowState)}
         emptyStateTitle="No stories."
       />
+      </PaneStatusBody>
     </Box>
   );
 }

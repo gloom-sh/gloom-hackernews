@@ -8,6 +8,9 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      # Shared UI/pane API from gloom-sh/gloomberb#743; update after the host release.
+      GLOOMBERB_REVISION: ffa36b68e9ae495cd7363c7081bd4fe0e4cb76b7
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -21,7 +24,10 @@ jobs:
       # CI typechecks against the same module graph that runs in production.
       - name: Link the Gloomberb host
         run: |
-          git clone --depth 1 https://github.com/gloom-sh/gloomberb.git "$RUNNER_TEMP/gloomberb"
+          git init "$RUNNER_TEMP/gloomberb"
+          git -C "$RUNNER_TEMP/gloomberb" remote add origin https://github.com/gloom-sh/gloomberb.git
+          git -C "$RUNNER_TEMP/gloomberb" fetch --depth 1 origin "$GLOOMBERB_REVISION"
+          git -C "$RUNNER_TEMP/gloomberb" checkout --detach FETCH_HEAD
           bun install --cwd "$RUNNER_TEMP/gloomberb"
           mkdir -p node_modules
           ln -sfn "$RUNNER_TEMP/gloomberb" node_modules/gloomberb
