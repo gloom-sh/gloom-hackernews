@@ -1,5 +1,5 @@
 {
-  "name": "gloomberb-hackernews",
+  "name": "gloom-hackernews",
   "version": "0.1.0",
   "description": "Hacker News front page in Gloomberb \u2014 the reference plugin",
   "type": "module",
@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gloom-sh/gloomberb-hackernews"
+    "url": "https://github.com/gloom-sh/gloom-hackernews"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
