@@ -17,7 +17,7 @@ export const hackerNewsPlugin: GloomPlugin = {
   name: "Hacker News",
   version: "0.1.0",
   description: "Hacker News front page, with Show, Ask, New, and Best",
-  homepage: "https://github.com/gloom-sh/gloomberb-hackernews",
+  homepage: "https://github.com/gloom-sh/gloom-hackernews",
   toggleable: true,
 
   // Only public HTTPS reads, so this plugin runs on every renderer. A plugin
