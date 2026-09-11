@@ -17,5 +17,10 @@
   "hosts": [
     "hacker-news.firebaseio.com"
   ],
+  "contributes": {
+    "panes": [
+      "hackernews"
+    ]
+  },
   "minGloomberb": "0.14.0"
 }
