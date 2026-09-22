@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Hacker News">
+  <!-- Hacker News mark, from news.ycombinator.com/y18.svg -->
   <rect width="64" height="64" fill="#FF6600"/>
-  <rect x="5.5" y="5.5" width="53" height="53" fill="none" stroke="#FFFFFF" stroke-width="3"/>
-  <path d="M20 17 L32 35 L44 17" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="square"/>
-  <path d="M32 34 L32 49" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="square"/>
+  <path transform="translate(-1.3617 -1.3617) scale(0.34043)" d="m73.2521756 45.01 22.7478244 47.39130083 22.7478244-47.39130083h19.56569631l-34.32352071 64.48661468v41.49338532h-15.98v-41.49338532l-34.32352071-64.48661468z" fill="#FFFFFF"/>
 </svg>
