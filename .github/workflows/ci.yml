@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Shared UI/pane API from gloom-sh/gloomberb#743; update after the host release.
-      GLOOMBERB_REVISION: ffa36b68e9ae495cd7363c7081bd4fe0e4cb76b7
+      GLOOMBERB_REVISION: 198737b6b23370fe6e359bccd785fca6e1b8993e
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2

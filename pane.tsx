@@ -9,6 +9,7 @@ import {
   SectionHeading,
   Tabs,
   useExternalLinkFooter,
+  usePaneHeaderTabs,
   type DataTableCell,
   type DataTableColumn,
   type PaneFooterSegment,
@@ -24,6 +25,7 @@ import { HACKERNEWS_PANE_ID, HN_FEEDS, type HnFeedId, type HnStory } from "./typ
 
 const PAGE_SIZE = 50;
 const REFRESH_MS = 5 * 60_000;
+const FEED_TABS = HN_FEEDS.map((entry) => ({ label: entry.label, value: entry.id as string }));
 
 type Column = DataTableColumn & { id: "score" | "title" | "site" | "comments" | "age" };
 
@@ -182,14 +184,25 @@ export function HackerNewsPane({ focused, width, height }: PaneProps) {
 
   const columns = useMemo(() => buildColumns(width), [width]);
 
-  const tabs = (
+  const selectFeed = useCallback((value: string) => {
+    setFeed(value as HnFeedId);
+    setDetailOpen(false);
+  }, [setFeed]);
+
+  // The pane's only partition, so the desktop draws it in the title bar and the
+  // table keeps the row the strip used to take.
+  const tabsInHeader = usePaneHeaderTabs({
+    tabs: FEED_TABS,
+    activeValue: feed,
+    onSelect: selectFeed,
+    focused: focused && !detailOpen,
+  });
+
+  const tabs = tabsInHeader ? null : (
     <Tabs
-      tabs={HN_FEEDS.map((entry) => ({ label: entry.label, value: entry.id }))}
+      tabs={FEED_TABS}
       activeValue={feed}
-      onSelect={(value) => {
-        setFeed(value as HnFeedId);
-        setDetailOpen(false);
-      }}
+      onSelect={selectFeed}
       focused={focused && !detailOpen}
       variant="underline"
       dense
@@ -219,7 +232,7 @@ export function HackerNewsPane({ focused, width, height }: PaneProps) {
         }}
         onActivate={() => setDetailOpen(true)}
         rootWidth={width}
-        rootHeight={Math.max(1, height - 1)}
+        rootHeight={Math.max(1, height - (tabsInHeader ? 0 : 1))}
         columns={columns}
         items={rows}
         getItemKey={(story) => String(story.id)}
