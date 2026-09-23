@@ -14,7 +14,7 @@
     "test": "bun test"
   },
   "peerDependencies": {
-    "gloomberb": ">=0.14.0",
+    "gloomberb": ">=0.15.0",
     "react": ">=19"
   },
   "devDependencies": {
