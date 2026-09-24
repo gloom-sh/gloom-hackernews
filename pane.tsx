@@ -3,16 +3,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   DataTableStackView,
   EmptyState,
-  Notice,
   PaneStatusBody,
   Prose,
-  SectionHeading,
+  StatGrid,
   Tabs,
   useExternalLinkFooter,
   usePaneHeaderTabs,
   type DataTableCell,
   type DataTableColumn,
   type PaneFooterSegment,
+  type StatItem,
 } from "gloomberb/components";
 import { usePluginPaneState } from "gloomberb/react";
 import { colors } from "gloomberb/theme";
@@ -30,24 +30,28 @@ const FEED_TABS = HN_FEEDS.map((entry) => ({ label: entry.label, value: entry.id
 type Column = DataTableColumn & { id: "score" | "title" | "site" | "comments" | "age" };
 
 function buildColumns(width: number): Column[] {
-  const scoreWidth = 5;
-  const commentsWidth = 5;
-  const ageWidth = 6;
-  // Site gets a fixed slice; the title absorbs whatever the pane has left, so
-  // the table stays readable from a narrow split up to a full-width window.
-  const siteWidth = width > 90 ? 22 : 0;
-  const titleWidth = Math.max(20, width - scoreWidth - commentsWidth - ageWidth - siteWidth - 8);
-
+  // The title takes whatever the fixed columns leave, so the table reads well
+  // from a narrow split up to a full-width window. Site is the first to go.
   const columns: Column[] = [
-    { id: "score", label: "PTS", width: scoreWidth, align: "right" },
-    { id: "title", label: "TITLE", width: titleWidth, align: "left" },
+    { id: "score", label: "PTS", width: 5, align: "right" },
+    { id: "title", label: "TITLE", width: 20, align: "left", flexGrow: 1 },
   ];
-  if (siteWidth > 0) columns.push({ id: "site", label: "SITE", width: siteWidth, align: "left" });
+  if (width > 90) columns.push({ id: "site", label: "SITE", width: 22, align: "left" });
   columns.push(
-    { id: "comments", label: "CMT", width: commentsWidth, align: "right" },
-    { id: "age", label: "AGE", width: ageWidth, align: "right" },
+    { id: "comments", label: "CMT", width: 5, align: "right" },
+    { id: "age", label: "AGE", width: 5, align: "right" },
   );
   return columns;
+}
+
+/** "42m", "3h", "2d": the AGE header already says how old, so no "ago". */
+function formatAge(unixSeconds: number): string {
+  const minutes = Math.floor((Date.now() / 1000 - unixSeconds) / 60);
+  if (minutes < 1) return "<1m";
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h`;
+  return `${Math.floor(hours / 24)}d`;
 }
 
 function renderCell(story: HnStory, column: Column, rowState: { selected: boolean }): DataTableCell {
@@ -71,31 +75,37 @@ function renderCell(story: HnStory, column: Column, rowState: { selected: boolea
       };
     case "age":
       return {
-        text: story.time > 0 ? formatRelativeAge(story.time * 1000) : "—",
+        text: story.time > 0 ? formatAge(story.time) : "—",
         color: selected ?? colors.textDim,
       };
   }
 }
 
 function StoryDetail({ story, width }: { story: HnStory; width: number }) {
+  // The stack bar already names the story, so the detail opens on its figures.
+  const stats: StatItem[] = [
+    { id: "points", label: "Points", value: String(story.score) },
+    { id: "comments", label: "Comments", value: String(story.comments) },
+    {
+      id: "posted",
+      label: "Posted",
+      value: story.time > 0 ? formatRelativeAge(story.time * 1000) : "—",
+      detail: `by ${story.by}`,
+    },
+  ];
+  if (story.site) stats.push({ id: "site", label: "Site", value: story.site });
+
   return (
-    <ScrollBox scrollY focusable={false} flexGrow={1} flexShrink={1} flexDirection="column" width={width} paddingLeft={1} paddingRight={1}>
-      <Notice tone="muted">{[
-        `${story.score} points`, `by ${story.by}`,
-        story.time > 0 ? formatRelativeAge(story.time * 1000) : null,
-        `${story.comments} comments`,
-      ].filter(Boolean).join("  ·  ")}</Notice>
-      {story.site ? <SectionHeading title={story.site} /> : null}
-      {story.text ? (
+    <Box flexDirection="column" flexGrow={1} flexShrink={1} width={width}>
+      <StatGrid items={stats} width={width} />
+      <ScrollBox scrollY focusable={false} flexGrow={1} flexShrink={1} flexDirection="column" paddingLeft={1} paddingRight={1}>
         <Box flexDirection="column" paddingTop={1}>
-          <Prose text={stripHtml(story.text)} width={Math.max(1, width - 2)} />
+          {story.text
+            ? <Prose text={stripHtml(story.text)} width={Math.max(1, width - 2)} />
+            : <EmptyState title="No text body." />}
         </Box>
-      ) : (
-        <Box paddingTop={1}>
-          <EmptyState title="No text body." hint="Press o to open the article." />
-        </Box>
-      )}
-    </ScrollBox>
+      </ScrollBox>
+    </Box>
   );
 }
 
