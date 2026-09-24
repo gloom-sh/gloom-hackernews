@@ -2,7 +2,7 @@
 
 The Hacker News front page as a Gloomberb pane. Top, New, Best, Show, and Ask, with scores, comment counts, and one-key article opening.
 
-Requires Gloomberb 0.15.0 or later for title-bar tabs and `StatGrid` ([Gloomberb #1091](https://github.com/gloom-sh/gloomberb/pull/1091)); 0.14.1 does not provide them.
+Requires Gloomberb 0.15.0 or later for title-bar tabs ([Gloomberb #1038](https://github.com/gloom-sh/gloomberb/pull/1038)) and `StatGrid` ([Gloomberb #1091](https://github.com/gloom-sh/gloomberb/pull/1091)); 0.14.1 provides neither.
 
 ```bash
 gloomberb install gloom-sh/gloom-hackernews

@@ -9,7 +9,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     env:
-      # Title-bar tabs and StatGrid from gloom-sh/gloomberb#1091; update after the 0.15.0 release.
+      # Title-bar tabs (gloom-sh/gloomberb#1038) and StatGrid (#1091); update after the 0.15.0 release.
       GLOOMBERB_REVISION: 4172ad1f122651f980a97755d4db0c3ad5c6f0d9
     steps:
       - uses: actions/checkout@v4
