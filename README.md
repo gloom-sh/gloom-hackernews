@@ -2,7 +2,7 @@
 
 The Hacker News front page as a Gloomberb pane. Top, New, Best, Show, and Ask, with scores, comment counts, and one-key article opening.
 
-This UI migration requires the shared component API in [Gloomberb #743](https://github.com/gloom-sh/gloomberb/pull/743), targeting 0.14.0. Keep this branch staged until that host release is available; released 0.13.3 does not provide these components.
+Requires Gloomberb 0.15.0 or later for title-bar tabs ([Gloomberb #1038](https://github.com/gloom-sh/gloomberb/pull/1038)) and `StatGrid` ([Gloomberb #1091](https://github.com/gloom-sh/gloomberb/pull/1091)); 0.14.1 provides neither.
 
 ```bash
 gloomberb install gloom-sh/gloom-hackernews
@@ -17,9 +17,11 @@ It is the smallest complete Gloomberb plugin: about 400 lines, no dependencies b
 | File | What it shows |
 |---|---|
 | `index.tsx` | The whole plugin contract — id, metadata, `targets`, a pane, and a command-bar template |
+| `types.ts` | The plugin and pane ids, the feed list, and the story shape the other files share |
 | `client.ts` | Talking to a third-party API through `createThrottledFetch`, and normalizing its responses |
-| `pane.tsx` | A table-plus-detail pane using shared components, pane-scoped state, and the pane footer |
+| `pane.tsx` | A table-plus-detail pane using shared components: title-bar tabs, a detail that opens on a `StatGrid`, pane-scoped state, and the pane footer |
 | `client.test.ts` | Testing the part with real branching, and nothing else |
+| `gloom.json` | The directory manifest: name, icon, `targets`, `hosts`, the pane it contributes, and `minGloom` |
 
 ### Getting started
 
@@ -48,6 +50,8 @@ gloomberb install your-github-user/my-plugin
 **Keep pane state in `usePluginPaneState`.** It is scoped per pane instance, so two copies of the pane in one layout stay independent and both survive a restart.
 
 **Put status in the footer, not the body.** Only things that change — loading, error, staleness — belong there.
+
+**Let the host draw the chrome.** `usePaneHeaderTabs` puts the feed strip in the desktop title bar and returns false in the terminal, where the pane draws its own `Tabs`. An open story starts on a `StatGrid` of its figures, because the stack bar already names it.
 
 ## Development
 
