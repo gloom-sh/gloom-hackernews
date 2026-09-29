@@ -20,6 +20,13 @@
   "contributes": {
     "panes": [
       "hackernews"
+    ],
+    "shortcuts": [
+      {
+        "code": "HN",
+        "name": "Hacker News",
+        "description": "Top, New, Best, Show and Ask stories with scores and comments."
+      }
     ]
   },
   "minGloom": "0.15.0"
