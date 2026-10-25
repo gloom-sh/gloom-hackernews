@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import * as Components from "gloomberb/components";
 
 import {
   DataTableStackView,
@@ -22,7 +23,15 @@ import { HACKERNEWS_PANE_ID, HN_FEEDS, type HnFeedId, type HnStory } from "./typ
 const PAGE_SIZE = 50;
 const REFRESH_MS = 5 * 60_000;
 
-type Column = DataTableColumn & { id: "score" | "title" | "site" | "comments" | "age" };
+// Select once per host so older versions keep their existing layout behavior.
+const useTableLayoutWidth = (Components as typeof Components & {
+  useTableLayoutWidth?: (width: number) => number;
+}).useTableLayoutWidth ?? ((width: number) => width);
+
+type Column = DataTableColumn & {
+  id: "score" | "title" | "site" | "comments" | "age";
+  minWidth?: number;
+};
 
 function buildColumns(width: number): Column[] {
   const scoreWidth = 5;
@@ -42,7 +51,8 @@ function buildColumns(width: number): Column[] {
     { id: "comments", label: "CMT", width: commentsWidth, align: "right" },
     { id: "age", label: "AGE", width: ageWidth, align: "right" },
   );
-  return columns;
+  // The title's existing twenty-cell minimum excludes its share of spare pane space.
+  return columns.map((column) => column.id === "title" ? { ...column, minWidth: 20 } : column);
 }
 
 function renderCell(story: HnStory, column: Column, rowState: { selected: boolean }): DataTableCell {
@@ -182,7 +192,8 @@ export function HackerNewsPane({ focused, width, height }: PaneProps) {
     info,
   });
 
-  const columns = useMemo(() => buildColumns(width), [width]);
+  const tableLayoutWidth = useTableLayoutWidth(width);
+  const columns = useMemo(() => buildColumns(tableLayoutWidth), [tableLayoutWidth]);
 
   const tabs = (
     <Tabs
