@@ -6,9 +6,9 @@ const BASE_URL = "https://hacker-news.firebaseio.com/v0";
 
 /**
  * `createThrottledFetch` gives every plugin the same request discipline the rest
- * of Gloomberb uses: rate limiting, retries with backoff, timeouts, and GET
+ * of Gloom uses: rate limiting, retries with backoff, timeouts, and GET
  * deduplication. It also defaults to the host's transport, which is what makes
- * a plugin work unchanged across the terminal, desktop, and browser renderers —
+ * a plugin work unchanged across the terminal, desktop, and browser renderers,
  * so plugins should not reach for global `fetch` directly.
  */
 const hnFetch = createThrottledFetch({

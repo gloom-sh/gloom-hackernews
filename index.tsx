@@ -4,7 +4,7 @@ import { HackerNewsPane } from "./pane";
 import { HACKERNEWS_PANE_ID, HACKERNEWS_PLUGIN_ID } from "./types";
 
 /**
- * The reference Gloomberb plugin.
+ * The reference Gloom plugin.
  *
  * It is deliberately small and uses only the public `gloomberb/*` API, so it is
  * the shortest path from "I want to add a pane" to something that runs. Copy
@@ -21,9 +21,14 @@ export const hackerNewsPlugin: GloomPlugin = {
   toggleable: true,
 
   // Only public HTTPS reads, so this plugin runs on every renderer. A plugin
-  // touching the filesystem or a socket would narrow this — see the IBKR
-  // Gateway plugin, which is ["cli", "tui", "desktop"].
+  // touching the filesystem or a socket would narrow this: the IBKR Gateway
+  // plugin is ["cli", "tui", "desktop"].
   targets: ["cli", "tui", "desktop", "web"],
+
+  // Every host the plugin fetches, also listed in gloom.json. The web app
+  // proxies exactly these, so a host left out works everywhere but the web.
+  // news.ycombinator.com is only opened as a link, so it is not here.
+  hosts: ["hacker-news.firebaseio.com"],
 
   panes: [
     {

@@ -8,30 +8,15 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    env:
-      # Title-bar tabs (gloom-sh/gloomberb#1038) and StatGrid (#1091); update after the 0.15.0 release.
-      GLOOMBERB_REVISION: 4172ad1f122651f980a97755d4db0c3ad5c6f0d9
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
+      # Brings the latest Gloom release as the gloomberb devDependency, so this
+      # checks the plugin against what users run, exactly as a fresh clone does.
       - run: bun install
-
-      # Mirrors what Gloomberb does at install time: link the host rather than
-      # depending on it, so there is exactly one copy of gloomberb and react and
-      # CI typechecks against the same module graph that runs in production.
-      - name: Link the Gloomberb host
-        run: |
-          git init "$RUNNER_TEMP/gloomberb"
-          git -C "$RUNNER_TEMP/gloomberb" remote add origin https://github.com/gloom-sh/gloomberb.git
-          git -C "$RUNNER_TEMP/gloomberb" fetch --depth 1 origin "$GLOOMBERB_REVISION"
-          git -C "$RUNNER_TEMP/gloomberb" checkout --detach FETCH_HEAD
-          bun install --cwd "$RUNNER_TEMP/gloomberb"
-          mkdir -p node_modules
-          ln -sfn "$RUNNER_TEMP/gloomberb" node_modules/gloomberb
-          ln -sfn "$RUNNER_TEMP/gloomberb/node_modules/react" node_modules/react
 
       - run: bun run typecheck
       - run: bun test
