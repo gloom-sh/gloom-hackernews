@@ -182,7 +182,7 @@ export function HackerNewsPane({ focused, width, height }: PaneProps) {
   }
 
   // Adds the "o — open" hint and the o shortcut, and renders the link source in
-  // the pane footer, the same way every other Gloomberb pane with an external
+  // the pane footer, the same way every other Gloom pane with an external
   // link does.
   useExternalLinkFooter({
     registrationId: HACKERNEWS_PANE_ID,
