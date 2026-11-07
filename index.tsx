@@ -15,7 +15,7 @@ import { HACKERNEWS_PANE_ID, HACKERNEWS_PLUGIN_ID } from "./types";
 export const hackerNewsPlugin: GloomPlugin = {
   id: HACKERNEWS_PLUGIN_ID,
   name: "Hacker News",
-  version: "0.1.0",
+  version: "0.1.1",
   description: "Hacker News front page, with Show, Ask, New, and Best",
   homepage: "https://github.com/gloom-sh/gloom-hackernews",
   toggleable: true,
