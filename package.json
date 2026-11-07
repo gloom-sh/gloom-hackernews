@@ -1,6 +1,6 @@
 {
   "name": "gloom-hackernews",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Hacker News front page in Gloom, the reference plugin",
   "type": "module",
   "main": "index.tsx",
